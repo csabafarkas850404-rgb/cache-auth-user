@@ -19,8 +19,20 @@ class CacheableEloquentUserProvider extends EloquentUserProvider
 
         $cacheKey = $prefix . $identifier;
 
-        return Cache::store($store)->remember($cacheKey, $ttl, function () use ($identifier) {
-            return parent::retrieveById($identifier);
-        });
+        $cachedData = Cache::store($store)->get($cacheKey);
+
+        if ($cachedData && is_array($cachedData)) {
+            $model = $this->createModel();
+
+            return $model->newInstance($cachedData, true);
+        }
+
+        $user = parent::retrieveById($identifier);
+
+        if ($user) {
+            Cache::store($store)->put($cacheKey, $user->getAttributes(), $ttl);
+        }
+
+        return $user;
     }
 }

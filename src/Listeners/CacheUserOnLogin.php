@@ -22,6 +22,7 @@ class CacheUserOnLogin
 
         $cacheKey = $prefix . $event->user->getAuthIdentifier();
 
-        Cache::store($store)->put($cacheKey, $event->user, $ttl);
+        // Csak a nyers attribútumokat mentjük tömbként
+        Cache::store($store)->put($cacheKey, $event->user->getAttributes(), $ttl);
     }
 }
