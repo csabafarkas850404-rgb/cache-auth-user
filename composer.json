@@ -1,1 +1,34 @@
- 
+{
+  "name": "csafa/cache-auth-user",
+  "description": "Cache Laravel auth user using custom provider and event listeners.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "CsaFa"
+    }
+  ],
+  "require": {
+    "php": "^8.2",
+    "laravel/framework": "^13.0"
+  },
+  "require-dev": {
+    "pestphp/pest": "^3.0",
+    "orchestra/testbench": "^10.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "CsaFa\\CacheAuthUser\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "CsaFa\\CacheAuthUser\\Providers\\CacheAuthUserServiceProvider"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/pest"
+  }
+}
