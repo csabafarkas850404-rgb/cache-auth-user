@@ -24,13 +24,22 @@ class CacheableEloquentUserProvider extends EloquentUserProvider
         if ($cachedData && is_array($cachedData)) {
             $model = $this->createModel();
 
-            return $model->newInstance($cachedData, true);
+            $instance = $model->newInstance($cachedData, true);
+            $instance->setRawAttributes($cachedData, true);
+
+            $connectionName = $model->getConnectionName() ?: config('database.default');
+            $instance->setConnection($connectionName);
+
+            return $instance;
         }
 
         $user = parent::retrieveById($identifier);
 
         if ($user) {
-            Cache::store($store)->put($cacheKey, $user->getAttributes(), $ttl);
+            // Biztosítjuk, hogy az id (vagy egyedi kulcs) benne legyen a cache-elt tömbben
+            $attributes = $user->getAttributes();
+            $attributes[$user->getKeyName()] = $user->getKey();
+            Cache::store($store)->put($cacheKey, $attributes, $ttl);
         }
 
         return $user;
