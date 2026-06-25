@@ -4,7 +4,10 @@ namespace CsaFa\CacheAuthUser\Providers;
 
 use CsaFa\CacheAuthUser\Extensions\CacheableEloquentUserProvider;
 use CsaFa\CacheAuthUser\Listeners\CacheUserOnLogin;
+use CsaFa\CacheAuthUser\Listeners\RemoveUserFromCacheOnLogout;
 use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Lockout;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +38,11 @@ class CacheAuthUserServiceProvider extends ServiceProvider
         Event::listen(
             Login::class,
             CacheUserOnLogin::class
+        );
+
+        Event::listen(
+            Logout::class,
+            RemoveUserFromCacheOnLogout::class
         );
 
         Auth::provider('cacheable-eloquent', function ($app, array $config) {
