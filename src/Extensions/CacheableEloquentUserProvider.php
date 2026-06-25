@@ -24,7 +24,13 @@ class CacheableEloquentUserProvider extends EloquentUserProvider
         if ($cachedData && is_array($cachedData)) {
             $model = $this->createModel();
 
-            return $model->newInstance($cachedData, true);
+            // 1. Feltöltjük a nyers adatokkal (ez beállítja az attributes ÉS original tömböket is)
+            $model->setRawAttributes($cachedData, true);
+
+            // 2. Jelezzük, hogy a modell létezik az adatbázisban
+            $model->exists = true;
+
+            return $model;
         }
 
         $user = parent::retrieveById($identifier);
